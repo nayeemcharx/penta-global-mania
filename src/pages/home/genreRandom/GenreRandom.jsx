@@ -10,7 +10,7 @@ function GenreRandom({genre,pageNum}) {
     
     
     const { data, loading } = useFetch(`/discover/movie?with_genres=${genre.id}&page=${pageNum+1}`);
-    console.log(data)
+    // console.log(data)
     
     return (
         <div className="carouselSection">

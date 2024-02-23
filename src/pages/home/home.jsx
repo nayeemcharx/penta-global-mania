@@ -7,7 +7,7 @@ import useFetch from "../../hooks/useFetch";
 const Home = () => {
 
     const { data: genresData } = useFetch(`/genre/movie/list`);
-    console.log(genresData?.genres)
+
     return (
         <div className="homePage">
             {genresData?.genres?.map((item) => {

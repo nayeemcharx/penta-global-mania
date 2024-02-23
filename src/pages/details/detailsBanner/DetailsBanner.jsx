@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
@@ -12,11 +12,76 @@ import CircleRating from "../../../components/circleRating/CircleRating";
 import Img from "../../../components/lazyLoadImage/Img.jsx";
 import PosterFallback from "../../../assets/no-poster.png";
 import { Link } from 'react-router-dom'
+import {auth,db} from "../../../config/firebase";
+import {getDocs,collection,addDoc} from "firebase/firestore"
+import {useAuthState} from "react-firebase-hooks/auth"
 
-
-const DetailsBanner = ({crew }) => {
+const DetailsBanner = ({crew ,ID}) => {
  
+    const [user]=useAuthState(auth)
+    const[movieList,setMovieList]=useState([])
+    const movieCollectionRef=collection(db,`${auth?.currentUser?.uid}`)
+    const [idPresent,setIdPresent]=useState(false)
+    const getMovieList = async()=>{
+      try{
+        const wishdata = await getDocs(movieCollectionRef);
+        const filteredData = wishdata.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+        for(let i=0;i<filteredData.length;i++)
+        {
+            console.log(ID);
+            console.log(filteredData[i].movie_id);
+            if(filteredData[i].movie_id==ID)
+            {
+                setIdPresent(true);
+                console.log("it ran omg");
+            }
+        }
+        setMovieList(filteredData);
+       }
+       catch(err){
+         console.log(err)
+         console.log(auth?.currentUser?.uid)
+       }
+       
+   }
+    useEffect(()=>{
+      if(idPresent==false)
+        getMovieList();
 
+    },[user])
+
+    const onsubmit = async () =>{
+        if(idPresent==false)  
+        {
+            try{
+                await addDoc(movieCollectionRef,{
+                movie_id:ID,
+                userId:auth?.currentUser?.uid,
+                title:data?.title,
+                overview:data?.overview,
+                poster:data?.poster_path
+                
+            })
+            }
+            catch(e)
+            {
+                console.log(e);
+            }
+        
+            getMovieList();
+            setIdPresent(true);
+        
+        }
+        else
+        {
+            console.log("presesnt already")
+        }
+
+    }
+    
     const { mediaType, id } = useParams();
     const { data, loading } = useFetch(`/${mediaType}/${id}`);
     const { url } = useSelector((state) => state.home);
@@ -82,6 +147,19 @@ const DetailsBanner = ({crew }) => {
                                                     1
                                                 )}
                                             />
+                                            {user?
+                                            
+                                                (<div>
+                                                    { idPresent?
+                                                    <button className="button-18">already added</button>:
+                                                    <button className="button-18" onClick={onsubmit} >add to watchlist</button>
+
+                                                    }
+                                                </div>)
+                                                :
+                                                (<></>)
+                                                
+                                                }
                                         </div>
 
                                         <div className="overview">

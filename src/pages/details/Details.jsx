@@ -7,16 +7,16 @@ import DetailsBanner from "./detailsBanner/DetailsBanner";
 import Cast from "./cast/Cast";
 import Similar from "./carousels/Similar";
 import Recommendation from "./carousels/Recommendation";
-
+import {auth} from "../../config/firebase"
 const Details = () => {
     const { mediaType, id } = useParams();
     const { data: credits, loading: creditsLoading } = useFetch(
         `/${mediaType}/${id}/credits`
     );
-
+    console.log(auth?.currentUser?.email)
     return (
         <div>
-            <DetailsBanner crew={credits?.crew} />
+            <DetailsBanner crew={credits?.crew} ID={`${id}`} />
             <Cast data={credits?.cast} loading={creditsLoading} />
             <Similar mediaType={mediaType} id={id} />
             <Recommendation mediaType={mediaType} id={id} />

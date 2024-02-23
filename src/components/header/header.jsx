@@ -3,7 +3,9 @@ import { SlMenu } from "react-icons/sl";
 import { VscChromeClose } from "react-icons/vsc";
 import { useNavigate, useLocation } from "react-router-dom";
 import ContentWrapper from "../contentWrapper/ContentWrapper";
-
+import {auth, googleProvider} from "../../config/firebase"
+import {signInWithPopup,signOut} from "firebase/auth"
+import {useAuthState} from "react-firebase-hooks/auth"
 
 import "./style.scss";
 
@@ -14,11 +16,33 @@ const Header = () => {
     const [mobileMenu, setMobileMenu] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
+    const [showSearch, setShowSearch] = useState("");
+    const [user]=useAuthState(auth)
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [location]);
+    // console.log(auth?.currentUser?.photoURL)
+    const signInWithGoogle = async ()=>{
+        try{
+            await signInWithPopup(auth,googleProvider);
+        }
+        catch(err)
+        {
+            console.error(err);
+        }
 
+    }
+    const signOutFromGoogle = async ()=>{
+        try{
+            await signOut(auth);
+        }
+        catch(err)
+        {
+            console.error(err);
+        }
+
+    }
     const controlNavbar = () => {
         if (window.scrollY > 200) {
             if (window.scrollY > lastScrollY && !mobileMenu) {
@@ -49,9 +73,16 @@ const Header = () => {
     };
 
     const navigationHandler = (type) => {
-        if (type === "query") {
+        if (type === "query") 
+        {
             navigate("/query");
-        } else {
+        } 
+        else if(type=="wishlist")
+        {
+            navigate("/wishlist");
+        }
+        else
+        {
             navigate("/");
         }
         setMobileMenu(false);
@@ -74,10 +105,18 @@ const Header = () => {
                     >
                         Query
                     </li>
+                    <li
+                        className="menuItem"
+                        onClick={() => navigationHandler("wishlist")}
+                    >
+                        Wish List
+                    </li>
                     <li/>
                         
                 </ul>
-
+                {user?
+                <button className="button-33" onClick={signOutFromGoogle}>sign out</button>:
+                <button className="button-33" onClick={signInWithGoogle}>sign in</button>}
                 <div className="mobileMenuItems">
                     
                     {mobileMenu ? (

@@ -5,12 +5,12 @@ import "./style.scss";
 
 
 
-const notFound = () => {
+const notFound = ({code,message}) => {
     return (
         <div className="notFound">
             <ContentWrapper>
-                <span className="bigText">404</span>
-                <span className="smallText">Page not found!</span>
+                <span className="bigText">{code}</span>
+                <span className="smallText">{message}</span>
             </ContentWrapper>
         </div>
     );

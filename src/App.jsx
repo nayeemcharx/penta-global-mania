@@ -8,7 +8,7 @@ import Home from './pages/home/home'
 import Query from './pages/Query/Query'
 import NotFound from './pages/notFound/notFound'
 import Details from "./pages/details/Details"
-
+import WishList from './pages/wishList/WishList'
 
 function App() {
   const dispatch = useDispatch()
@@ -37,7 +37,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/:mediaType/:id" element={<Details />} />
           <Route path="/query" element={<Query/>} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/wishlist" element={<WishList/>} />
+          <Route path="*" element={<NotFound code={"404"} message={"Page not found!"}/>} />
       </Routes>
     </BrowserRouter>
   )
